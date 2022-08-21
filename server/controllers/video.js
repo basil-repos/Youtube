@@ -80,7 +80,7 @@ export const trendingVideos = async (req, res, next) => {
 
 export const randomVideos = async (req, res, next) => {
     try {
-        const videos = await Video.aggregate([{ $sample: { size: 1 } }])
+        const videos = await Video.aggregate([{ $sample: { size: 20 } }])
 
         res.status(200).json(videos);
     } catch (error) {
@@ -107,7 +107,6 @@ export const subscribedVideos = async (req, res, next) => {
 
 export const getByTag = async (req, res, next) => {
     const tags = req.query.tags.split(",");
-    console.log(tags)
     try {
         const videos = await Video.find({ tags: { $in: tags } }).limit(20);
         res.status(200).json(videos);

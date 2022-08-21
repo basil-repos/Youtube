@@ -1,5 +1,10 @@
+import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
+import { auth, provider } from "../firebase"
+import { signInWithPopup } from "firebase/auth"
 
 const Container = styled.div`
   display: flex;
@@ -81,21 +86,53 @@ const SubTitle = styled.span`
 
 const Signin = () => {
     const [type, setType] = useState("login");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        dispatch(loginStart());
+        try {
+            const res = await axios.post('/auth/signin', { name, password });
+            dispatch(loginSuccess(res.data));
+        } catch (error) {
+            dispatch(loginFailure());
+        }
+    }
+
+    const signInWithGoogle = async () => {
+        dispatch(loginStart());
+        signInWithPopup(auth, provider).then((result) => {
+            axios.post('/auth/google', {
+                name: result.user.displayName,
+                email: result.user.email,
+                img: result.user.photoURL
+            }).then((res) => {
+                dispatch(loginSuccess(res.data));
+            });
+        }).catch((err) => {
+            dispatch(loginFailure());
+        })
+    }
 
     return (
         <Container type={type}>
             <LoginWrapper type={type}>
                 <Title>Sign in</Title>
-                <Input placeholder="username" />
-                <Input type="password" placeholder="password" />
-                <Button>Sign in</Button>
+                <Input placeholder="username" onChange={(e) => setName(e.target.value)} />
+                <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
+                <Button onClick={handleLogin}>Signin</Button>
+                <Button onClick={signInWithGoogle}>Signin with Google</Button>
                 <SubTitle onClick={() => setType('register')}>Not a member?Signup now</SubTitle>
             </LoginWrapper>
             <RegisterWrapper type={type}>
                 <Title>Signup</Title>
-                <Input placeholder="username" />
-                <Input placeholder="email" />
-                <Input type="password" placeholder="password" />
+                <Input placeholder="username" onChange={(e) => setName(e.target.value)} />
+                <Input placeholder="email" onChange={(e) => setEmail(e.target.value)} />
+                <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
                 <Button>Signup</Button>
                 <SubTitle onClick={() => setType('login')}>Already have an account?</SubTitle>
             </RegisterWrapper>

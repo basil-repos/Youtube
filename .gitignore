@@ -4,9 +4,7 @@ client/package-lock.json
 
 server/node_modules
 server/package-lock.json
-server/.env 
 
-**/.env
 
 # Editor directories and files
 .idea
@@ -67,16 +65,6 @@ Thumbs.db
 *.wmv
 
 # env file
-!.env
-!.env.production
-!.env.testing
-!.env.development
+.env
 
-
-
-
-
-.vscode/launch.json
-.vscode/settings.json
-.vscode/settings.json
 

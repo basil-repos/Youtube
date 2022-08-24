@@ -83,13 +83,17 @@ const Comments = ({videoId}) => {
 
     return (
         <Container>
-            {currentUser && <NewComment>
-                <Avatar src={currentUser?.img} />
-                <Input placeholder="Add a comment..." value={desc} onChange={(e) => setDesc(e.target.value)} />
-            </NewComment>}
-            <ButtonWrapper>
-                <Button onClick={handleSubmit}>Comment</Button>
-            </ButtonWrapper>
+            {currentUser && 
+            <>
+                <NewComment>
+                    <Avatar src={currentUser?.img} />
+                    <Input placeholder="Add a comment..." value={desc} onChange={(e) => setDesc(e.target.value)} />
+                </NewComment>
+                <ButtonWrapper>
+                    <Button onClick={handleSubmit}>Comment</Button>
+                </ButtonWrapper>
+            </>
+            }
             {comments.map(comment => (
                 <Comment comment={comment} key={comment._id} />
             ))}

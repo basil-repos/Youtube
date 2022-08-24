@@ -1,5 +1,5 @@
 import express from 'express';
-import { addVideo, deleteVideo, dislike, getByTag, getVideo, like, randomVideos, search, subscribedVideos, trendingVideos, updateVideo } from '../controllers/video.js';
+import { addVideo, addVideoViews, deleteVideo, dislike, getByTag, getVideo, like, randomVideos, search, subscribedVideos, trendingVideos, updateVideo } from '../controllers/video.js';
 import { verifyToken } from '../verifyToken.js';
 
 const router = express.Router();
@@ -17,16 +17,16 @@ router.delete('/:id', verifyToken, deleteVideo);
 router.get('/find/:id', getVideo);
 
 // Increment video views
-router.get('/view/:id', getVideo);
+router.put('/view/:id', addVideoViews);
 
 // Trending videos
-router.get('/trending', trendingVideos);
+router.post('/trending', trendingVideos);
 
 // Random videos
-router.get('/random', randomVideos);
+router.post('/random', randomVideos);
 
 // Subscribed videos
-router.get('/subscribed', verifyToken, subscribedVideos);
+router.post('/subscribed', verifyToken, subscribedVideos);
 
 // Search video by tags
 router.get('/tags', getByTag);

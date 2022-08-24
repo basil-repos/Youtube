@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { format } from "timeago.js";
+import { axiosInstance } from "../config";
 
 const Container = styled.div`
     display: flex;
@@ -44,7 +44,7 @@ const Comment = ({comment}) => {
 
     useEffect(() => {
         const fetchChannel = async () => {
-            const res = await axios.get(`/users/find/${comment.userId}`);
+            const res = await axiosInstance.get(`/users/find/${comment.userId}`);
             setChannel(res.data);
         }
         fetchChannel();

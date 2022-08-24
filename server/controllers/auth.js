@@ -11,11 +11,12 @@ export const signup = async (req, res, next) => {
 
         const user = await newUser.save();
 
-        res.status(200).json({
-            success: true,
-            status: 200,
-            message: 'User created successfully'
-        });
+        const token = jwt.sign({ id: user._id }, process.env.JWT);
+        const { password, ...details } = user._doc;
+
+        res.cookie("access_token", token, {
+            httpOnly: true
+        }).status(200).json(details);
     } catch (error) {
         next(error);
     }
@@ -33,7 +34,8 @@ export const signin = async (req, res, next) => {
         const { password, ...details } = user._doc;
 
         res.cookie("access_token", token, {
-            httpOnly: true
+            withCredentials: true, 
+            credentials: 'include'
         }).status(200).json(details);
     } catch (error) {
         next(error);
@@ -63,4 +65,8 @@ export const googleAuth = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+}
+
+export const logout = (req, res) => {
+    res.clearCookie("access_token").status(200).json("logout successfully");
 }

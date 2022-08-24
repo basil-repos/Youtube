@@ -13,7 +13,7 @@ import commentRoutes from './routes/comments.js';
 const app = express();
 dotenv.config();
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 const dbconnect = () => {
     mongoose.connect(process.env.MONGODB_URL).then(() => {

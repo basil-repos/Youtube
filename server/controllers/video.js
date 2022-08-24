@@ -71,8 +71,15 @@ export const addVideoViews = async (req, res, next) => {
 
 export const trendingVideos = async (req, res, next) => {
     try {
-        const videos = await Video.find().sort({ views: -1 });
-        res.status(200).json(videos);
+        const page = req.body.page ? req.body.page : 1;
+        const perPage = 9;
+        const skip = perPage * page - perPage;
+        const videos = await Video.find().sort({ views: -1 }).limit(perPage).skip(skip);
+        const total_count = await Video.count();
+        const pages = total_count > 0 ? Math.ceil(total_count/perPage) : 0;
+        const output = { videos, pages };
+
+        res.status(200).json(output);
     } catch (error) {
         next(error);
     }
@@ -80,9 +87,15 @@ export const trendingVideos = async (req, res, next) => {
 
 export const randomVideos = async (req, res, next) => {
     try {
-        const videos = await Video.aggregate([{ $sample: { size: 20 } }])
+        const page = req.body.page ? req.body.page : 1;
+        const perPage = 9;
+        const skip = perPage * page - perPage;
+        const videos = await Video.find().limit(perPage).skip(skip).sort({ createdAt: -1 });
+        const total_count = await Video.count();
+        const pages = total_count > 0 ? Math.ceil(total_count/perPage) : 0;
+        const output = { videos, pages };
 
-        res.status(200).json(videos);
+        res.status(200).json(output);
     } catch (error) {
         next(error);
     }
@@ -98,8 +111,10 @@ export const subscribedVideos = async (req, res, next) => {
                 return Video.find({ userId: channelId });
             })
         );
+        const videos = list.flat().sort((a,b) => b.createdAt - a.createdAt);
+        const output = { videos, pages: 0 };
 
-        res.status(200).json(list.flat().sort((a,b) => b.createdAt - a.createdAt));
+        res.status(200).json(output);
     } catch (error) {
         next(error);
     }

@@ -10,11 +10,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
-import { dislike, fetchSuccess, like } from "../redux/videoSlice";
+import { dislike, fetchSuccess, like, views } from "../redux/videoSlice";
 import { format } from "timeago.js";
 import { subscription } from "../redux/userSlice";
 import Recommendation from "../components/Recommendation";
+import { axiosInstance } from "../config";
 
 const Container = styled.div`
   display: flex;
@@ -98,6 +98,7 @@ const ChannelCounter = styled.span`
 
 const Description = styled.p`
   font-size: 14px;
+  color: ${({ theme }) => theme.text};
 `;
 
 const Subscribe = styled.button`
@@ -111,11 +112,27 @@ const Subscribe = styled.button`
   cursor: pointer;
 `;
 
-const VideoFrame = styled.video`
-    max-height: 520px;
+const VideoFrame = styled.iframe`
+    height: 520px;
     width: 100%;
     object-fit: cover;
 `
+
+const OtherDetails = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+`
+
+const Tags = styled.div`
+    margin-top: 10px;
+`
+
+const Tag = styled.span`
+    color: blue;
+    margin-right: 2px;
+`
+
 
 const Video = () => {
 
@@ -130,30 +147,36 @@ const Video = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const videoRes = await axios.get(`/videos/find/${path}`);
-                const channelRes = await axios.get(`/users/find/${videoRes.data.userId}`);
+                const videoRes = await axiosInstance.get(`/videos/find/${path}`);
+                const channelRes = await axiosInstance.get(`/users/find/${videoRes.data.userId}`);
                 
                 setChannel(channelRes.data);
                 dispatch(fetchSuccess(videoRes.data));
+                updateViews();
             } catch (err) {}
         };
         fetchData();
     }, [path, dispatch]);
 
+    const updateViews = async () => {
+        await axiosInstance.put(`/videos/view/${currentVideo._id}`);
+        dispatch(views());
+    }
+
     const handleLike = async () => {
-        await axios.put(`/videos/like/${currentVideo._id}`);
+        await axiosInstance.put(`/videos/like/${currentVideo._id}`);
         dispatch(like(currentUser._id));
     };
 
     const handleDislike = async () => {
-        await axios.put(`/videos/dislike/${currentVideo._id}`);
+        await axiosInstance.put(`/videos/dislike/${currentVideo._id}`);
         dispatch(dislike(currentUser._id));
     };
 
     const handleSubscribe = async () => {
         currentUser.subscribedUsers.includes(channel._id) 
-          ?  await axios.put(`/users/unsubscribe/${channel._id}`)
-          : await axios.put(`/users/subscribe/${channel._id}`);
+          ?  await axiosInstance.put(`/users/unsubscribe/${channel._id}`)
+          : await axiosInstance.put(`/users/subscribe/${channel._id}`);
 
         dispatch(subscription(channel._id));
     }
@@ -192,6 +215,14 @@ const Video = () => {
                         </Button>
                     </Buttons>
                 </Details>
+                <OtherDetails>
+                    <Description>{currentVideo.desc}</Description>
+                    <Tags>
+                    {currentVideo.tags.map((tag) => (
+                        <Tag>#{tag}</Tag>
+                    ))}
+                    </Tags>
+                </OtherDetails>
                 <Hr />
                 <Channel>   
                     <ChannelInfo>
@@ -199,12 +230,9 @@ const Video = () => {
                         <ChannelDetail>
                             <ChannelName>{channel.name}</ChannelName>
                             <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
-                            <Description>
-                                {currentVideo.desc}
-                            </Description>
                         </ChannelDetail>
                     </ChannelInfo>
-                    <Subscribe onClick={handleSubscribe} type={currentUser.subscribedUsers?.includes(channel._id) ? "SUBSCRIBED" : "SUBSCRIBE"}>{currentUser.subscribedUsers?.includes(channel._id) ? "SUBSCRIBED" : "SUBSCRIBE"}</Subscribe>
+                    <Subscribe onClick={handleSubscribe} type={currentUser ? currentUser.subscribedUsers?.includes(channel._id) ? "SUBSCRIBED" : "SUBSCRIBE" : "SUBSCRIBE"}>{currentUser ? currentUser.subscribedUsers?.includes(channel._id) ? "SUBSCRIBED" : "SUBSCRIBE" : "SUBSCRIBE"}</Subscribe>
                 </Channel>
                 <Hr />
                 <Comments videoId={currentVideo._id} />

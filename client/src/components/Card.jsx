@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { format } from 'timeago.js';
+import { axiosInstance } from "../config";
 
 const Container = styled.div`
     width: ${(props) => props.type !== "sm" && "360px"};
@@ -35,7 +35,9 @@ const ChannelImage = styled.img`
   display: ${(props) => props.type === "sm" && "none"};
 `;
 
-const Texts = styled.div``
+const Texts = styled.div`
+    flex: 1;
+`
 
 const Title = styled.h1`
     font-size: 16px;
@@ -47,6 +49,7 @@ const ChannelName = styled.h2`
     font-size: 14px;
     color: ${({ theme }) => theme.textSoft};
     margin: 9px 0px;
+    flex: 1;
 `
 
 const Info = styled.div`
@@ -60,7 +63,7 @@ const Card = ({type, video}) => {
 
     useEffect(() => {
         const fetchChannel = async () => {
-            const res = await axios.get(`/users/find/${video.userId}`);
+            const res = await axiosInstance.get(`/users/find/${video.userId}`);
             setChannel(res.data);
         }
         fetchChannel();

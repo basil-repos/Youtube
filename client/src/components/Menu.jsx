@@ -119,12 +119,12 @@ const Menu = ({ darkMode, setDarkMode }) => {
                         Explore
                     </Item>
                 </Link>
-                <Link to="/subscriptions" style={{ textDecoration: 'none', color: 'inherit' }}>
+                {currentUser && <Link to="/subscriptions" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <Item>
                         <SubscriptionsOutlinedIcon />
                         Subscriptions
                     </Item>
-                </Link>
+                </Link>}
                 <Hr />
                 <Item>
                     <VideoLibraryOutlinedIcon />

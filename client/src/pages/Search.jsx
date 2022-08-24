@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components"
 import Card from "../components/Card"
+import { axiosInstance } from "../config";
 
 const Container = styled.div`
     display: flex;
@@ -17,7 +17,7 @@ const Search = () => {
 
     useEffect(() => {
         const fetchVideos = async () => {
-        const res = await axios.get(`/videos/search${query}`);
+        const res = await axiosInstance.get(`/videos/search${query}`);
             setVideos(res.data);
         };
         fetchVideos();

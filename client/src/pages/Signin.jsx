@@ -1,10 +1,12 @@
-import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
 import { auth, provider } from "../firebase"
 import { signInWithPopup } from "firebase/auth"
+import { axiosInstance } from "../config";
+import { useNavigate } from "react-router-dom";
+import Alert from '@mui/material/Alert';
 
 const Container = styled.div`
   display: flex;
@@ -84,21 +86,41 @@ const SubTitle = styled.span`
   color: #3ea6ff;
 `;
 
+const Form = styled.form`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+`
+
 const Signin = () => {
     const [type, setType] = useState("login");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMsg, setErrorMsg] = useState({
+        login: null,
+        register: null
+    });
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        setErrorMsg((prev) => {
+            return {...prev, login: null}
+        });
         dispatch(loginStart());
         try {
-            const res = await axios.post('/auth/signin', { name, password });
+            const res = await axiosInstance.post('/auth/signin', { name, password });
             dispatch(loginSuccess(res.data));
+            navigate("/");
         } catch (error) {
+            setErrorMsg((prev) => {
+                return {...prev, login: error.response.data.message}
+            });
             dispatch(loginFailure());
         }
     }
@@ -106,7 +128,7 @@ const Signin = () => {
     const signInWithGoogle = async () => {
         dispatch(loginStart());
         signInWithPopup(auth, provider).then((result) => {
-            axios.post('/auth/google', {
+            axiosInstance.post('/auth/google', {
                 name: result.user.displayName,
                 email: result.user.email,
                 img: result.user.photoURL
@@ -118,13 +140,35 @@ const Signin = () => {
         })
     }
 
+    const handleRegister = async (e) => {
+        e.preventDefault();
+
+        setErrorMsg((prev) => {
+            return {...prev, register: null}
+        });
+        dispatch(loginStart());
+        try {
+            const res = await axiosInstance.post('/auth/signup', { name, email, password });
+            dispatch(loginSuccess(res.data));
+            navigate("/");
+        } catch (error) {
+            setErrorMsg((prev) => {
+                return {...prev, register: error.response.data.message}
+            });
+            dispatch(loginFailure());
+        }
+    }
+
     return (
         <Container type={type}>
             <LoginWrapper type={type}>
+                {errorMsg.login && <Alert variant="outlined" severity="error" style={{ width: '100%' }}>{errorMsg.login}</Alert>}
                 <Title>Sign in</Title>
-                <Input placeholder="username" onChange={(e) => setName(e.target.value)} />
-                <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
-                <Button onClick={handleLogin}>Signin</Button>
+                <Form onSubmit={handleLogin}>
+                    <Input placeholder="username" onChange={(e) => setName(e.target.value)} />
+                    <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
+                    <Button type="submit">Signin</Button>
+                </Form>
                 <Button onClick={signInWithGoogle}>Signin with Google</Button>
                 <SubTitle onClick={() => setType('register')}>Not a member?Signup now</SubTitle>
             </LoginWrapper>
@@ -133,7 +177,7 @@ const Signin = () => {
                 <Input placeholder="username" onChange={(e) => setName(e.target.value)} />
                 <Input placeholder="email" onChange={(e) => setEmail(e.target.value)} />
                 <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
-                <Button>Signup</Button>
+                <Button onClick={handleRegister}>Signup</Button>
                 <SubTitle onClick={() => setType('login')}>Already have an account?</SubTitle>
             </RegisterWrapper>
             <More>

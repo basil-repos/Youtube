@@ -127,6 +127,11 @@ const Navbar = () => {
         navigate('/');
     }
 
+    const handleProfile = () => {
+        navigate('/profile');
+        setDropdown(false)
+    }
+
     return (
         <>
             <Container>
@@ -145,7 +150,7 @@ const Navbar = () => {
                                 </UserDetails>
                             </User>
                             {dropdown && <Dropdown>
-                                <DropdownItem>
+                                <DropdownItem onClick={handleProfile}>
                                     <PersonIcon />&nbsp;
                                     Profile
                                 </DropdownItem>

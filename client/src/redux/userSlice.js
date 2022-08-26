@@ -37,9 +37,12 @@ export const userSlice = createSlice({
                 state.currentUser.subscribedUsers.push(action.payload);
           }
         },
+        updateUser: (state, action) => {
+            state.currentUser = action.payload;
+        }
     },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, subscription } = userSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, subscription, updateUser } = userSlice.actions;
 
 export default userSlice.reducer;

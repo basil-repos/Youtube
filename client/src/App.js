@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Video from "./pages/Video";
 import Signin from "./pages/Signin";
 import Search from "./pages/Search";
+import Profile from "./pages/Profile";
 
 const Container = styled.div`
     display: flex;
@@ -43,6 +44,7 @@ function App() {
                                     <Route path="trending" element={<Home type="trending" />} />
                                     <Route path="subscriptions" element={<Home type="subscribed" />} />
                                     <Route path="search" element={<Search />} />
+                                    <Route path="profile" element={<Profile />} />
                                     <Route path="signin" element={<Signin />} />
                                     <Route path="video">
                                         <Route path=":id" element={<Video />} />

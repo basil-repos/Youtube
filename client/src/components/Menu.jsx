@@ -113,13 +113,13 @@ const Menu = ({ darkMode, setDarkMode }) => {
                         Home
                     </Item>
                 </Link>
-                <Link to="/trending" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to="trending" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <Item>
                         <ExploreOutlinedIcon />
                         Explore
                     </Item>
                 </Link>
-                {currentUser && <Link to="/subscriptions" style={{ textDecoration: 'none', color: 'inherit' }}>
+                {currentUser && <Link to="subscriptions" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <Item>
                         <SubscriptionsOutlinedIcon />
                         Subscriptions
@@ -130,10 +130,12 @@ const Menu = ({ darkMode, setDarkMode }) => {
                     <VideoLibraryOutlinedIcon />
                     Library
                 </Item>
-                <Item>
-                    <HistoryOutlinedIcon />
-                    History
-                </Item>
+                {currentUser && <Link to="history" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Item>
+                        <HistoryOutlinedIcon />
+                        History
+                    </Item>
+                </Link>}
                 <Hr />
                 {!currentUser &&
                     <>

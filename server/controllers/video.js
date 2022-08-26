@@ -1,11 +1,12 @@
 import Video from "../models/Video.js"
 import User from "../models/User.js";
 import { createError } from "../error.js";
+import History from "../models/History.js";
 
 export const addVideo = async (req, res, next) => {
     const newVideo = new Video({ userId: req.user.id, ...req.body });
     try {
-        const savedVideo = await newVideo.save(newVideo);
+        const savedVideo = await newVideo.save();
 
         res.status(200).json(savedVideo);
     } catch (error) {
@@ -63,6 +64,15 @@ export const addVideoViews = async (req, res, next) => {
         await Video.findByIdAndUpdate(req.params.id, {
             $inc: { views: 1 }
         });
+        let currentDate = new Date();
+        const date = currentDate.getFullYear()+"-"+("0" + (currentDate.getMonth() + 1)).slice(-2)+"-"+("0" + currentDate.getDate()).slice(-2);
+        const newHistory = new History({
+            userId: req.user.id,
+            videoId: req.params.id,
+            date
+        });
+        await newHistory.save();
+
         res.status(200).json("view has been increased");
     } catch (error) {
         next(error);

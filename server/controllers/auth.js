@@ -15,7 +15,8 @@ export const signup = async (req, res, next) => {
         const { password, ...details } = user._doc;
 
         res.cookie("access_token", token, {
-            httpOnly: true
+            withCredentials: true, 
+            credentials: 'include'
         }).status(200).json(details);
     } catch (error) {
         next(error);

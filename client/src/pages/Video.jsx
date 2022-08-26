@@ -152,14 +152,14 @@ const Video = () => {
                 
                 setChannel(channelRes.data);
                 dispatch(fetchSuccess(videoRes.data));
-                updateViews();
+                updateViews(videoRes.data._id);
             } catch (err) {}
         };
         fetchData();
     }, [path, dispatch]);
 
-    const updateViews = async () => {
-        await axiosInstance.put(`/videos/view/${currentVideo._id}`);
+    const updateViews = async (id) => {
+        await axiosInstance.put(`/videos/view/${id}`);
         dispatch(views());
     }
 

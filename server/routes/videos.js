@@ -17,7 +17,7 @@ router.delete('/:id', verifyToken, deleteVideo);
 router.get('/find/:id', getVideo);
 
 // Increment video views
-router.put('/view/:id', addVideoViews);
+router.put('/view/:id', verifyToken, addVideoViews);
 
 // Trending videos
 router.post('/trending', trendingVideos);

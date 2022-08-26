@@ -13,6 +13,7 @@ import Video from "./pages/Video";
 import Signin from "./pages/Signin";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
+import History from "./pages/History";
 
 const Container = styled.div`
     display: flex;
@@ -46,6 +47,7 @@ function App() {
                                     <Route path="search" element={<Search />} />
                                     <Route path="profile" element={<Profile />} />
                                     <Route path="signin" element={<Signin />} />
+                                    <Route path="history" element={<History />} />
                                     <Route path="video">
                                         <Route path=":id" element={<Video />} />
                                     </Route>

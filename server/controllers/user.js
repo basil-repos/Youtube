@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import History from "../models/History.js";
 import { createError } from "../error.js";
 import bcrypt from 'bcryptjs'
 
@@ -80,5 +81,14 @@ export const unsubscribe = async (req, res, next) => {
         res.status(200).json("Unsubscription successfull");
     } catch (error) {
         next(error)
+    }
+}
+
+export const userHistory = async (req, res, next) => {
+    try {
+        const data = await History.find({userId: req.user.id }).sort({ createdAt: -1 });
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
     }
 }

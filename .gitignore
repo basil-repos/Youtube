@@ -1,5 +1,6 @@
 .DS_Store
 client/node_modules
+client/config.js
 
 server/node_modules
 
